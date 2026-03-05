@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Médico - Dr. Lucas Cano</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary: #023e8a; /* Azul Marinho Profissional */
+            --secondary: #0077b6;
+            --accent: #caf0f8;
+            --bg: #f8f9fa;
+            --white: #ffffff;
+            --danger: #d90429;
+            --success: #2b9348;
+        }
+
+        body { font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; background: var(--bg); color: #333; }
+        
+        /* Navbar Moderna */
+        nav { background: var(--primary); padding: 15px; display: flex; justify-content: center; gap: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); position: sticky; top: 0; z-index: 1000; flex-wrap: wrap; }
+        nav a { color: white; text-decoration: none; font-weight: 500; cursor: pointer; padding: 8px 16px; border-radius: 20px; transition: 0.3s; font-size: 0.9rem; }
+        nav a:hover { background: rgba(255,255,255,0.2); }
+        .nav-admin { background: #fca311; color: #000 !important; }
+
+        .container { max-width: 1000px; margin: 30px auto; background: var(--white); padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        section { display: none; animation: fadeIn 0.5s; }
+        section.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1, h2, h3 { color: var(--primary); margin-top: 0; }
+        
+        /* Inputs e Forms */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .full-width { grid-column: span 2; }
+        input, textarea, select { width: 100%; padding: 12px; border: 1.5px solid #dee2e6; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box; font-size: 1rem; }
+        input:focus { border-color: var(--secondary); outline: none; box-shadow: 0 0 0 3px var(--accent); }
+        
+        button { border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-main { background: var(--primary); color: white; }
+        .btn-main:hover { background: var(--secondary); }
+        .btn-del { background: #fee2e2; color: var(--danger); }
+        .btn-edit { background: #fef3c7; color: #92400e; }
+        .btn-pdf { background: #dcfce7; color: var(--success); }
+
+        /* Estilo dos Cards */
+        .card { border: 1px solid #edf2f7; padding: 20px; border-radius: 10px; margin-bottom: 15px; position: relative; transition: 0.3s; background: #fff; }
+        .card:hover { border-color: var(--secondary); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .card-actions { display: flex; gap: 10px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; }
+
+        /* Tab Interna Área Médica */
+        .med-tabs { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 15px; border-bottom: 2px solid #eee; margin-bottom: 25px; }
+        .med-tabs button { background: #eee; color: #666; font-size: 0.8rem; }
+        .med-tabs button.active-tab { background: var(--primary); color: white; }
+
+        /* Modelo do PDF (Escondido no site) */
+        #pdf-template { display: none; padding: 40px; color: #000; }
+        .pdf-header { display: flex; align-items: center; border-bottom: 3px solid var(--primary); padding-bottom: 20px; margin-bottom: 20px; }
+        .pdf-logo { width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 30px; margin-right: 20px; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a onclick="showSection('inicio')">INÍCIO</a>
+    <a onclick="showSection('quem-somos')">QUEM SOMOS</a>
+    <a onclick="showSection('agendamento')">AGENDAMENTO</a>
+    <a onclick="showSection('paciente-docs')">MEUS LAUDOS</a>
+    <a onclick="showSection('area-medica')" class="nav-admin">ÁREA MÉDICA</a>
+</nav>
+
+<section id="inicio" class="container active">
+    <div style="text-align: center;">
+        <div style="font-size: 60px;">🩺</div>
+        <h1>Consultório Dr. Lucas Cano</h1>
+        <p>Excelência em Clínica Médica e Pneumologia pela UNICAMP.</p>
+        <div style="background: var(--accent); padding: 20px; border-radius: 10px; display: inline-block;">
+            <p><strong>WhatsApp:</strong> (+55) 19 99508-3511</p>
+            <p><strong>Discord:</strong> @lucass_xz</p>
+        </div>
+    </div>
+</section>
+
+<section id="quem-somos" class="container">
+    <h2>Trajetória Profissional</h2>
+    <div class="card">
+        <p>🎓 <strong>Medicina:</strong> Formação Em Medicina pela UNICAMP (6 anos)</p>
+        <p>🥼 <strong>Especialidade:</strong> Especializado em clínica médica..</p>
+        <p>📃 <strong>Experiências:</strong> Expertise em pneumologia e radiologia/diagnóstico por imagem..</p>
+    </div>
+    <div class="form-grid">
+        <div class="card"><h3>Clínica Geral</h3><p>Check-ups, Diabetes, Hipertensão.</p></div>
+        <div class="card"><h3>Pneumologia</h3><p>Asma, Sono, DPOC, Cessação de Tabagismo.</p></div>
+    </div>
+</section>
+
+<section id="agendamento" class="container">
+    <h2>Agendar Consulta</h2>
+    <form onsubmit="handleAgendamento(event)" id="form-agenda">
+        <div class="form-grid">
+            <input type="text" id="ag-nome" placeholder="Nome Completo" required>
+            <input type="number" id="ag-idade" placeholder="Idade" required>
+            <input type="text" id="ag-esp" placeholder="Especialidade" required class="full-width">
+            <input type="date" id="ag-data" required>
+            <input type="time" id="ag-hora" required>
+            <input type="text" id="ag-contato" placeholder="Zap ou Discord" required class="full-width">
+        </div>
+        <button type="submit" class="btn-main">Enviar Solicitação</button>
+    </form>
+</section>
+
+<section id="paciente-docs" class="container">
+    <h2>Laudos e Prescrições</h2>
+    <p>Visualize aqui os documentos emitidos pelo Dr. Lucas.</p>
+    <div class="grid-docs">
+        <div id="paciente-lista"></div>
+    </div>
+</section>
+
+<section id="area-medica" class="container">
+    <div id="login-form" style="text-align: center; max-width: 400px; margin: 0 auto;">
+        <h2>🔐 Acesso Restrito</h2>
+        <input type="text" id="user" placeholder="Usuário">
+        <input type="password" id="pass" placeholder="Senha">
+        <button onclick="login()" class="btn-main" style="width: 100%;">Entrar no Sistema</button>
+    </div>
+
+    <div id="med-content" style="display:none;">
+        <div class="med-tabs">
+            <button onclick="showMedTab('tab-agenda')" class="btn-tab">Agenda</button>
+            <button onclick="showMedTab('tab-prontuarios')" class="btn-tab">Prontuários</button>
+            <button onclick="showMedTab('tab-laudos')" class="btn-tab">Laudos/Prescrições</button>
+        </div>
+
+        <div id="tab-agenda" class="med-tab-content">
+            <h3>Solicitações Recebidas</h3>
+            <div id="med-lista-agenda"></div>
+        </div>
+
+        <div id="tab-prontuarios" class="med-tab-content" style="display:none;">
+            <h3>Gestão de Prontuários</h3>
+            <button onclick="novoProntuario()" class="btn-main">+ Criar Novo Prontuário</button>
+            <div id="med-lista-prontuarios" style="margin-top:20px;"></div>
+        </div>
+
+        <div id="tab-laudos" class="med-tab-content" style="display:none;">
+            <h3>Emitir Documentos</h3>
+            <div class="form-grid">
+                <div class="card">
+                    <h4>Nova Prescrição / Laudo</h4>
+                    <input type="text" id="doc-paciente" placeholder="Nome do Paciente">
+                    <select id="doc-tipo">
+                        <option value="Prescrição">Prescrição Médica</option>
+                        <option value="Laudo">Laudo Radiológico</option>
+                    </select>
+                    <textarea id="doc-conteudo" rows="6" placeholder="Texto do documento..."></textarea>
+                    <button onclick="salvarDoc()" class="btn-main">Salvar e Publicar</button>
+                </div>
+                <div id="med-lista-docs"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="pdf-template">
+    <div class="pdf-header">
+        <div class="pdf-logo">✚</div>
+        <div>
+            <h1 style="margin:0; font-size: 24px;">DR. LUCAS CANO</h1>
+            <p style="margin:0; color: #666;">CRM: 123456-SP | Clínica Médica & Pneumologia</p>
+        </div>
+    </div>
+    <div id="pdf-body"></div>
+    <div style="margin-top: 50px; border-top: 1px solid #ccc; text-align: center; padding-top: 10px;">
+        <p>__________________________________________</p>
+        <p>Assinatura Digital - Dr. Lucas Cano</p>
+        <small>Contatos: (+55) 19 99508-3511 | @lucass_xz</small>
+    </div>
+</div>
+
+<script>
+    // DATA STORAGE
+    let db = JSON.parse(localStorage.getItem('clinic_db')) || {
+        agenda: [],
+        prontuarios: [],
+        documentos: []
+    };
+
+    function saveDB() {
+        localStorage.setItem('clinic_db', JSON.stringify(db));
+        renderAll();
+    }
+
+    // NAVEGAÇÃO
+    function showSection(id) {
+        document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function showMedTab(id) {
+        document.querySelectorAll('.med-tab-content').forEach(t => t.style.display = 'none');
+        document.getElementById(id).style.display = 'block';
+    }
+
+    // LOGIN
+    function login() {
+        if(document.getElementById('user').value === 'Lucas Cano' && document.getElementById('pass').value === 'Lucas@54') {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('med-content').style.display = 'block';
+            renderAll();
+        } else { alert('Acesso Negado'); }
+    }
+
+    // AGENDAMENTO
+    function handleAgendamento(e) {
+        e.preventDefault();
+        const novo = {
+            id: Date.now(),
+            nome: document.getElementById('ag-nome').value,
+            idade: document.getElementById('ag-idade').value,
+            esp: document.getElementById('ag-esp').value,
+            data: document.getElementById('ag-data').value,
+            hora: document.getElementById('ag-hora').value,
+            contato: document.getElementById('ag-contato').value
+        };
+        db.agenda.push(novo);
+        saveDB();
+        alert('Solicitação enviada!');
+        document.getElementById('form-agenda').reset();
+    }
+
+    // GESTÃO DE DOCUMENTOS (LAUDOS/PRESC)
+    function salvarDoc() {
+        const doc = {
+            id: Date.now(),
+            paciente: document.getElementById('doc-paciente').value,
+            tipo: document.getElementById('doc-tipo').value,
+            texto: document.getElementById('doc-conteudo').value,
+            data: new Date().toLocaleDateString()
+        };
+        db.documentos.push(doc);
+        saveDB();
+        document.getElementById('doc-paciente').value = "";
+        document.getElementById('doc-conteudo').value = "";
+    }
+
+    function deletarDoc(id) {
+        db.documentos = db.documentos.filter(d => d.id !== id);
+        saveDB();
+    }
+
+    // GESTÃO DE PRONTUÁRIOS
+    function novoProntuario() {
+        const texto = prompt("Digite o prontuário (Modelo: NOME, IDADE, SINTOMAS...)", "NOME:\nIDADE:\nPESO:\nALTURA:\n---\nSINTOMAS:\nHDA:\nEXAME FÍSICO:\n---\nDIAGNÓSTICO:\nTRATAMENTO:");
+        if(texto) {
+            db.prontuarios.push({ id: Date.now(), texto: texto, data: new Date().toLocaleString() });
+            saveDB();
+        }
+    }
+
+    function editarProntuario(id) {
+        const p = db.prontuarios.find(x => x.id === id);
+        const novoTexto = prompt("Editar Prontuário:", p.texto);
+        if(novoTexto) {
+            p.texto = novoTexto;
+            saveDB();
+        }
+    }
+
+    function deletarProntuario(id) {
+        if(confirm("Deseja excluir este prontuário permanentemente?")) {
+            db.prontuarios = db.prontuarios.filter(x => x.id !== id);
+            saveDB();
+        }
+    }
+
+    // GERADOR DE PDF
+    function gerarPDF(texto, titulo) {
+        const body = document.getElementById('pdf-body');
+        body.innerHTML = `<h2>${titulo}</h2><div style="white-space: pre-wrap;">${texto}</div>`;
+        const element = document.getElementById('pdf-template');
+        element.style.display = 'block';
+        
+        const opt = {
+            margin: 10,
+            filename: `Dr_Lucas_Cano_${titulo}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().from(element).set(opt).save().then(() => {
+            element.style.display = 'none';
+        });
+    }
+
+    // RENDERIZAÇÃO
+    function renderAll() {
+        // Render Agenda
+        const agendaHtml = db.agenda.map(a => `
+            <div class="card">
+                <strong>${a.nome}</strong> - ${a.data} às ${a.hora}<br>
+                <small>${a.esp} | ${a.contato}</small>
+                <div class="card-actions">
+                    <button onclick="db.agenda = db.agenda.filter(x=>x.id!==${a.id}); saveDB()" class="btn-del">Concluir/Excluir</button>
+                </div>
+            </div>
+        `).join('');
+        document.getElementById('med-lista-agenda').innerHTML = agendaHtml || "Nenhuma consulta.";
+
+        // Render Docs (Médico)
+        const docsMedHtml = db.documentos.map(d => `
+            <div class="card">
+                <strong>${d.tipo}: ${d.paciente}</strong><br><small>${d.data}</small>
+                <div class="card-actions">
+                    <button onclick="gerarPDF('${d.texto}', '${d.tipo}')" class="btn-pdf">Baixar PDF</button>
+                    <button onclick="deletarDoc(${d.id})" class="btn-del">Excluir</button>
+                </div>
+            </div>
+        `).join('');
+        document.getElementById('med-lista-docs').innerHTML = docsMedHtml;
+
+        // Render Docs (Paciente)
+        const docsPacHtml = db.documentos.map(d => `
+            <div class="card">
+                <strong>${d.tipo}</strong><br>Paciente: ${d.paciente}<br>Data: ${d.data}
+                <div class="card-actions">
+                    <button onclick="alert('${d.texto}')" class="btn-main">Ver Online</button>
+                    <button onclick="gerarPDF('${d.texto}', '${d.tipo}')" class="btn-pdf">Baixar PDF</button>
+                </div>
+            </div>
+        `).join('');
+        document.getElementById('paciente-lista').innerHTML = docsPacHtml || "Sem documentos disponíveis.";
+
+        // Render Prontuários
+        const prontHtml = db.prontuarios.map(p => `
+            <div class="card">
+                <strong>Registro de ${p.data}</strong><br>
+                <div style="font-size: 0.85rem; background: #f1f5f9; padding: 10px; margin-top: 5px; white-space: pre-wrap;">${p.texto}</div>
+                <div class="card-actions">
+                    <button onclick="editarProntuario(${p.id})" class="btn-edit">Editar</button>
+                    <button onclick="deletarProntuario(${p.id})" class="btn-del">Excluir</button>
+                </div>
+            </div>
+        `).join('');
+        document.getElementById('med-lista-prontuarios').innerHTML = prontHtml || "Nenhum prontuário salvo.";
+    }
+
+    // Inicializar
+    renderAll();
+</script>
+
+</body>
+</html>
